@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>WR Citing Kit</title>
+<meta name="description" content="Citing Commissioner match workbook and WR Citing Report / CCW form filler – works offline.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1f3864">
+<link rel="icon" href="icons/favicon-48.png" sizes="48x48">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Citing Kit">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+:root{
+  --bg:#f4f6fa; --card:#ffffff; --ink:#1b2333; --muted:#5b6475; --line:#d9dee8;
+  --navy:#1f3864; --navy-ink:#ffffff; --gold:#c9a227; --red:#b42318; --red-bg:#fdecea;
+  --amb:#8a5a00; --amb-bg:#fff4d6; --ok:#1e7a3c; --ok-bg:#e6f4ea; --field:#fbfcfe;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#11151d; --card:#1a202b; --ink:#e7ebf2; --muted:#9aa3b5; --line:#2c3443;
+    --navy:#7fa2dd; --navy-ink:#0d1220; --red:#ff8a7a; --red-bg:#3a1d1a; --amb:#ffcf66; --amb-bg:#3a2f12;
+    --ok:#7ad69a; --ok-bg:#163222; --field:#141922;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11151d; --card:#1a202b; --ink:#e7ebf2; --muted:#9aa3b5; --line:#2c3443;
+  --navy:#7fa2dd; --navy-ink:#0d1220; --red:#ff8a7a; --red-bg:#3a1d1a; --amb:#ffcf66; --amb-bg:#3a2f12;
+  --ok:#7ad69a; --ok-bg:#163222; --field:#141922;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 40px}
+header{display:flex;align-items:center;gap:14px;margin:6px 0 18px}
+header img{width:56px;height:56px;border-radius:13px;flex:none}
+h1{font-size:22px;margin:0;color:var(--navy)}
+.sub{color:var(--muted);margin:2px 0 0;font-size:14px}
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 11px;font-size:13px;font-weight:600;margin-top:8px}
+.chip.ok{background:var(--ok-bg);color:var(--ok)} .chip.wait{background:var(--amb-bg);color:var(--amb)} .chip.off{background:var(--line);color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px}
+.card h2{font-size:18px;margin:0 0 4px}
+.card p{margin:0 0 12px;color:var(--muted);font-size:14px}
+a.tile{display:block;text-decoration:none;color:inherit}
+a.tile:hover .card,a.tile:focus-visible .card{border-color:var(--navy)}
+.go{display:inline-block;background:var(--navy);color:var(--navy-ink);border-radius:9px;padding:11px 18px;font-weight:700;font-size:15px}
+button{border:0;border-radius:9px;padding:11px 18px;font-family:inherit;font-weight:700;font-size:15px;line-height:1;cursor:pointer;background:var(--navy);color:var(--navy-ink)}
+button.ghost{background:transparent;color:var(--navy);border:1px solid var(--line);font-weight:600}
+button:disabled{opacity:.45;cursor:not-allowed}
+label{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
+input[type=text]{width:100%;border:1px solid var(--line);border-radius:9px;background:var(--field);color:var(--ink);padding:10px;font-family:inherit;font-size:15px;margin-bottom:12px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.msg{border-radius:9px;padding:10px 12px;margin-top:12px;font-size:14px}
+.good{background:var(--ok-bg);color:var(--ok)} .warn{background:var(--amb-bg);color:var(--amb)} .err{background:var(--red-bg);color:var(--red)}
+details{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:14px}
+summary{cursor:pointer;font-weight:700;color:var(--navy)}
+details ol{padding-left:20px;margin:10px 0 0} details li{margin:6px 0;font-size:14px}
+.banner{position:sticky;top:0;z-index:5;background:var(--navy);color:var(--navy-ink);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:14px}
+.banner button{background:var(--navy-ink);color:var(--navy);padding:8px 12px;font-size:14px}
+.foot{color:var(--muted);font-size:12.5px;margin-top:18px}
+.hidden{display:none !important}
+</style>
+</head>
+<body>
+<div class="banner hidden" id="update"><span>A new version of the Citing Kit is ready.</span><button id="reload">Update now</button></div>
+<div class="wrap">
+  <header>
+    <img src="icons/icon-192.png" alt="">
+    <div>
+      <h1>WR Citing Kit</h1>
+      <p class="sub">Citing Commissioner match workbook and WR Citing Report / CCW form filler.</p>
+      <span class="chip wait" id="status">Checking offline readiness…</span>
+    </div>
+  </header>
+
+  <div class="card hidden" id="installCard">
+    <h2>Install this app</h2>
+    <p id="installTxt"></p>
+    <div class="row"><button id="installBtn" class="hidden">Install app</button></div>
+  </div>
+
+  <a class="tile" href="filler.html">
+    <div class="card">
+      <h2>Form Filler</h2>
+      <p>Paste a Report tab's payload from the workbook, add clip links and screen grabs, and produce the filled WR Citing Commissioner Report or CCW as a PDF.</p>
+      <span class="go">Open Form Filler ›</span>
+    </div>
+  </a>
+
+  <div class="card">
+    <h2>New match workbook</h2>
+    <p>A fresh, blank copy of the Citing Commissioner Match Workbook for each match. It opens in Excel, which works offline.</p>
+    <label for="match">Match name for the file (optional)</label>
+    <input type="text" id="match" placeholder="e.g. UAE v Hong Kong" autocomplete="off">
+    <div class="row"><button id="getWb">Get blank workbook</button></div>
+    <div id="wbMsg"></div>
+  </div>
+
+  <details id="howto">
+    <summary>Using it on this device</summary>
+    <div id="howBody"></div>
+  </details>
+
+  <p class="foot">Everything runs on this device – nothing you enter is uploaded. Open the app online now and then to pick up updates. <span id="ver"></span></p>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const STANDALONE = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+const WB = "Citing_Commissioner_Match_Workbook.xlsx";
+const XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+function msg(el, cls, html){ el.innerHTML = html ? `<div class="msg ${cls}">${html}</div>` : ""; }
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+// ---------- blank workbook (download on Windows, share sheet on iPad) ----------
+let wbBlob = null;
+fetch(WB).then(r => r.ok ? r.blob() : null).then(b => { wbBlob = b; }).catch(() => {});
+function wbName(){
+  const d = new Date(), pad = n => String(n).padStart(2, "0");
+  const date = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const m = $("match").value.trim().replace(/[^\w\- ]+/g, "").replace(/\s+/g, "_").slice(0, 60);
+  return `CC_Workbook_${date}${m ? "_" + m : ""}.xlsx`;
+}
+$("getWb").onclick = async () => {
+  if (!wbBlob) { msg($("wbMsg"), "err", "The workbook isn't stored on this device yet – open the app once with an internet connection."); return; }
+  const file = new File([wbBlob], wbName(), { type: XLSX });
+  if (IS_IOS && navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({ files: [file], title: file.name });
+      msg($("wbMsg"), "good", `Choose <b>Save to Files</b> (On My iPad › a “Citing” folder), then open it from Files in Excel. Or pick <b>Excel</b> directly in the share sheet.`);
+    } catch (e) { if (e.name !== "AbortError") msg($("wbMsg"), "err", esc(e.message)); }
+    return;
+  }
+  const url = URL.createObjectURL(file);
+  const a = document.createElement("a"); a.href = url; a.download = file.name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+  msg($("wbMsg"), "good", `Saved <b>${esc(file.name)}</b> to your Downloads folder. Move it to your match folder and open it in Excel.`);
+};
+
+// ---------- device-specific help + install ----------
+const HOW_IOS = `<ol>
+  <li><b>Workbook:</b> tap <i>Get blank workbook</i> → <i>Save to Files</i> → open it from the Files app in <b>Excel</b>. Keep it in <i>On My iPad</i> so it works with no connection.</li>
+  <li><b>Payload:</b> in Excel, select the red payload cell on the Report tab → <i>Copy</i>. Switch to this app → Form Filler → paste.</li>
+  <li><b>PDF:</b> after filling, tap <i>Save / Share PDF…</i> → <i>Save to Files</i> (or Mail it when you are back online).</li>
+  <li><b>Dictation:</b> tap a narrative box in Excel, then the mic key on the keyboard.</li></ol>`;
+const HOW_WIN = `<ol>
+  <li><b>Workbook:</b> click <i>Get blank workbook</i> – it goes to Downloads. Move it to your match folder and open it in <b>Excel</b>.</li>
+  <li><b>Payload:</b> in Excel, copy the red payload cell on the Report tab (Ctrl+C). In this app → Form Filler → paste (Ctrl+V).</li>
+  <li><b>PDF:</b> click <i>Download filled PDF</i> – it saves to Downloads with the report reference in its name.</li>
+  <li><b>Dictation:</b> click a narrative box in Excel and press <b>Win+H</b>.</li></ol>`;
+$("howBody").innerHTML = IS_IOS ? HOW_IOS : HOW_WIN;
+if (!STANDALONE) $("howto").open = true;
+
+let deferredPrompt = null;
+if (!STANDALONE) {
+  $("installCard").classList.remove("hidden");
+  $("installTxt").innerHTML = IS_IOS
+    ? "In <b>Safari</b>, tap the <b>Share</b> button (square with an arrow) → <b>Add to Home Screen</b> → <b>Add</b>. Then open <b>Citing Kit</b> from the Home Screen and wait for “Ready offline”."
+    : "In <b>Microsoft Edge</b>, click the <b>App available / Install</b> icon at the right of the address bar (or ⋯ menu → Apps → Install this site as an app). It then opens from the Start menu like any other app.";
+}
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault(); deferredPrompt = e; $("installBtn").classList.remove("hidden");
+});
+$("installBtn").onclick = async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null;
+  $("installBtn").classList.add("hidden");
+};
+window.addEventListener("appinstalled", () => { $("installCard").classList.add("hidden"); });
+
+// ---------- offline readiness + updates ----------
+async function checkReady(){
+  const st = $("status");
+  if (!("caches" in window) || !("serviceWorker" in navigator)) { st.className = "chip off"; st.textContent = "Offline storage not available in this browser"; return; }
+  const need = ["index.html", "filler.html", WB];
+  const keys = await caches.keys();
+  for (const k of keys.filter(k => k.startsWith("wr-citing-kit-"))) {
+    const c = await caches.open(k);
+    const hits = await Promise.all(need.map(n => c.match(n)));
+    if (hits.every(Boolean)) { st.className = "chip ok"; st.textContent = "✓ Ready offline"; return true; }
+  }
+  st.className = "chip wait"; st.textContent = navigator.onLine ? "Saving for offline use…" : "Not yet saved for offline use – connect once";
+  return false;
+}
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js").then((reg) => {
+    const watch = (w) => w && w.addEventListener("statechange", () => {
+      if (w.state === "installed" && navigator.serviceWorker.controller) $("update").classList.remove("hidden");
+      if (w.state === "activated") checkReady();
+    });
+    if (reg.waiting && navigator.serviceWorker.controller) $("update").classList.remove("hidden");
+    watch(reg.installing);
+    reg.addEventListener("updatefound", () => watch(reg.installing));
+    navigator.serviceWorker.ready.then(r => r.active && r.active.postMessage("version"));
+    $("reload").onclick = () => { if (reg.waiting) reg.waiting.postMessage("skipWaiting"); };
+  }).catch(() => checkReady());
+  navigator.serviceWorker.addEventListener("message", (e) => { if (e.data && e.data.version) $("ver").textContent = "Version " + e.data.version + "."; });
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => { if (!reloaded) { reloaded = true; location.reload(); } });
+}
+checkReady();
+setTimeout(checkReady, 2500);
+</script>
+</body>
+</html>
